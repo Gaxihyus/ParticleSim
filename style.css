@@ -1,10 +1,9 @@
 .buttons{
     width: 375px;
-    height: 75px;
+    height: 150px;
     background: lightblue;
     border: 5px solid black;
     padding: 5px;
-    float: right;
 }
 .button{
     width: 100px;
