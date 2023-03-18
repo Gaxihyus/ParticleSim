@@ -1,0 +1,16 @@
+.buttons{
+    width: 375px;
+    height: 75px;
+    background: lightblue;
+    border: 5px solid black;
+    padding: 5px;
+    float: right;
+}
+.button{
+    width: 100px;
+    height: 50px;
+    margin: 10px;
+}
+#canvas{
+    background: black;
+}
