@@ -1,8 +1,8 @@
 var end = false;
 var particles = [];
 var drawLines = false;
-var collisionsOn = true;
-
+var collisionsOn = false;
+var offset = 50;
 var airResistanceMult = 0.01;
 
 const canvas = document.getElementById('canvas');
@@ -12,7 +12,6 @@ const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 document.getElementById('drawlinesbox').addEventListener('click', () => drawLines = !drawLines)
 document.getElementById('collisionbox').addEventListener('click', () => collisionsOn = !collisionsOn)
-document.getElementById('addParticle').addEventListener('click', () => addParticle());
 document.getElementById('stop').addEventListener('click', () => end = true);
 
 function getRandomColor() {
@@ -29,19 +28,21 @@ function updateParticle()
     for(let i = 0; i < particles.length; i++)
     {
         let p = particles[i];
-        let w = canvas.width;
-        let h = canvas.height;
+        let w = canvas.width - offset;
+        let h = canvas.height - offset;
+        let clumpLevel = 0;
 
         //Check if out of bounds
-        if(p.x + p.vX >= w || p.x + p.vX <= 0) { p.vX *= -1; p.x = clamp(p.x, 0, w)}
-        if(p.y + p.vY >= h || p.y + p.vY <= 0) { p.vY *= -1; p.y = clamp(p.y, 0, h)};
+        if(p.x + p.vX >= w - offset || p.x + p.vX <= offset) { p.vX *= -1; p.x = clamp(p.x, offset, w)}
+        if(p.y + p.vY >= h - offset || p.y + p.vY <= offset) { p.vY *= -1; p.y = clamp(p.y, offset, h)};
 
         for(let j = 0; j < particles.length; j++)
         {
             let p2 = particles[j]
             if(p == p2) continue;
             let d = Math.sqrt(Math.pow(p.x - p2.x,2) + Math.pow(p.y - p2.y,2))
-            if(d <= p.radius + p2.radius + 2)
+            if(d <= 10) clumpLevel += 0;
+            if(d <= p.radius + p2.radius)
             {
                 if(collisionsOn)
                 {
@@ -50,12 +51,12 @@ function updateParticle()
                 }
             }
             //check if close enough for attraction/repulsion
-            else if(d <= 200)
+            else if(d <= 100)
             {
                 let dx = p2.x - p.x;
                 let dy = p2.y - p.y;
-                let Fx = 5 / dx;
-                let Fy = 5 / dy;
+                let Fx = (5 / dx) + clumpLevel;
+                let Fy = (5 / dy) + clumpLevel;
 
                 if(p.color != p2.color)
                 {
@@ -66,12 +67,9 @@ function updateParticle()
                 p.vX += Fx;
                 p.vY += Fy;
 
-                let maxSpeed = 2;
-
-                if(p.vX > maxSpeed) p.vX = maxSpeed;
-                if(p.vX < -maxSpeed) p.vX = -maxSpeed;
-                if(p.vY > maxSpeed) p.vY = maxSpeed;
-                if(p.vY < -maxSpeed) p.vY = -maxSpeed;
+                let maxSpeed = 2.5;
+                p.vX = clamp(p.vX, -maxSpeed, maxSpeed);
+                p.vY = clamp(p.vY, -maxSpeed, maxSpeed);
             }
         }
 
@@ -163,6 +161,8 @@ class Particle{
 for(let i = 0; i < 250; i++)
 {
     addParticle('#FF0000');
+    addParticle('#00FF00');
+    addParticle('#0000FF');
     addParticle();
 }
 
